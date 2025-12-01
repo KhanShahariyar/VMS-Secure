@@ -1,0 +1,58 @@
+/* Define a custom font family for the entire page */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a; /* Dark blue background color */
+}
+
+/* Keyframe animation for the logo pulsing effect */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.33);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Keyframe animation for the logo icon scale effect */
+@keyframes pulse-icon {
+    0% {
+        transform: scale(0.9);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    100% {
+        transform: scale(0.9);
+    }
+}
+
+/* Apply the pulsing animation to the ring element */
+.pulse-ring {
+    animation: pulse-ring 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
+/* Apply the icon animation to the SVG icon */
+.pulse-icon {
+    animation: pulse-icon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom styles to handle the SVG and gradients */
+.circle-gradient-border {
+    border-radius: 50%;
+    padding: 4px;
+    background: radial-gradient(circle at 120% 120%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(145deg, #1e3a8a, #3b82f6);
+    background-clip: padding-box, border-box;
+    background-origin: padding-box, border-box;
+}
+
+.inner-circle {
+    background: #1e293b;
+}

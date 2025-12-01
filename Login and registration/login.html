@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VMS | Login & Register</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- External CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="gradient-border w-full max-w-md">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl">
+            <!-- App Title -->
+            <h1 class="text-3xl font-bold text-center text-blue-400 mb-8">Visitor Management System</h1>
+
+            <!-- Toggle Buttons -->
+            <div class="flex justify-center mb-6">
+                <button id="login-toggle" class="toggle-btn active flex-1 py-3 px-4 text-sm rounded-l-lg transition-all duration-300">
+                    Login
+                </button>
+                <button id="register-toggle" class="toggle-btn flex-1 py-3 px-4 text-sm rounded-r-lg transition-all duration-300">
+                    Register
+                </button>
+            </div>
+
+            <!-- Login Form (Initially visible) -->
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium mb-1">Email address</label>
+                    <input type="email" id="login-email" name="email" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium mb-1">Password</label>
+                    <input type="password" id="login-password" name="password" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 rounded border-gray-600 bg-gray-700 focus:ring-blue-500">
+                        <label for="remember-me" class="ml-2 block text-sm">Remember me</label>
+                    </div>
+                    <a href="#" class="text-sm text-blue-400 hover:text-blue-300">Forgot password?</a>
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300">
+                    Login
+                </button>
+            </form>
+
+            <!-- Registration Form (Initially hidden) -->
+            <form id="register-form" class="space-y-6 hidden">
+                <div>
+                    <label for="register-name" class="block text-sm font-medium mb-1">Full Name</label>
+                    <input type="text" id="register-name" name="name" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <div>
+                    <label for="register-email" class="block text-sm font-medium mb-1">Email address</label>
+                    <input type="email" id="register-email" name="email" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <div>
+                    <label for="register-password" class="block text-sm font-medium mb-1">Password</label>
+                    <input type="password" id="register-password" name="password" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <div>
+                    <label for="confirm-password" class="block text-sm font-medium mb-1">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="" required>
+                </div>
+                <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all duration-300">
+                    Register
+                </button>
+            </form>
+        </div>
+    </div>
+    
+
+    <script src="script.js"></script>
+    <script>
+      document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        // Dummy credentials
+        if(email === 'user@gmail.com' && password === 'user') {
+          // Set login flag
+          localStorage.setItem('loggedIn', 'true');
+          // Redirect to user dashboard
+          window.location.href = "../User/user.html";
+        } else {
+          // Show error message
+          let errorMsg = document.getElementById('login-error-msg');
+          if(!errorMsg) {
+            errorMsg = document.createElement('p');
+            errorMsg.id = 'login-error-msg';
+            errorMsg.className = 'text-red-400 text-sm mt-2 text-center';
+            document.getElementById('login-form').appendChild(errorMsg);
+          }
+          errorMsg.textContent = "Invalid email or password!";
+        }
+      });
+    </script>
+</body>
+</html>

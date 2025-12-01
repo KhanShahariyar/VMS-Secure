@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Management System</title>
+  <!-- Add favicon using the logo image -->
+  <link rel="icon" type="image/png" href="Splash screen/icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="Splash screen/style.css">
+  <style>
+    /* Custom Gradient Background Animation */
+    .animated-gradient {
+      background: linear-gradient(270deg, #0B0D26, #1A2A6C, #0B0D26);
+      background-size: 500% 500%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    /* Floating Shapes for Hero */
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: float 8s ease-in-out infinite alternate;
+    }
+    @keyframes float {
+      0% {transform: translateY(0px);}
+      100% {transform: translateY(-20px);}
+    }
+    /* Custom Button Hover Glow */
+    .btn-glow:hover {
+      box-shadow: 0 0 20px rgba(59,130,246,0.7), 0 0 30px rgba(147,197,253,0.5);
+      transform: translateY(-3px);
+    }
+    /* Scroll Smooth */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* 3D Card Hover Effect */
+    .card-3d:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    /* Fade In Animation for Words */
+    @keyframes fadeInWord {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-word {
+      opacity: 0;
+      animation: fadeInWord 0.7s forwards;
+    }
+    @keyframes fadeInLetter {
+      0% { opacity: 0; transform: translateY(30px);}
+      100% { opacity: 1; transform: translateY(0);}
+    }
+    .animate-fade-in-letter {
+      opacity: 0;
+      display: inline-block;
+      animation: fadeInLetter 0.4s forwards;
+    }
+    .gradient-border {
+      background: linear-gradient(145deg, #1e3a8a, #3b82f6);
+      padding: 2px;
+      border-radius: 12px;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+    .message-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    .message-modal.show {
+      display: flex;
+    }
+    .message-content {
+      background-color: #1f2937;
+      padding: 2rem;
+      border-radius: 1rem;
+      text-align: center;
+      max-width: 90%;
+      color: white;
+      position: relative;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 1.5rem;
+      color: #d1d5db;
+      cursor: pointer;
+    }
+    .close-btn:hover {
+      color: #fca5a5;
+    }
+    /* Splash screen styles from Splash screen/style.css */
+    #splash-screen {
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s;
+    }
+    .pulse-ring {
+      animation: pulse-ring 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.33); opacity: 0.7; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .pulse-icon {
+      animation: pulse-icon 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse-icon {
+      0% { transform: scale(0.9);}
+      50% { transform: scale(1);}
+      100% { transform: scale(0.9);}
+    }
+    .circle-gradient-border {
+      border-radius: 50%;
+      padding: 4px;
+      background: radial-gradient(circle at 120% 120%, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%), linear-gradient(145deg, #1e3a8a, #3b82f6);
+      background-clip: padding-box, border-box;
+      background-origin: padding-box, border-box;
+    }
+    .inner-circle {
+      background: #1e293b;
+    }
+  </style>
+</head>
+<body class="bg-[#0B0D26] text-white font-poppins">
+
+  <!-- Splash Screen (merged from Splash screen folder) -->
+  <div id="splash-screen">
+    <div class="flex flex-col items-center text-center p-6">
+      <div class="relative w-48 h-48 flex items-center justify-center">
+        <div class="absolute w-full h-full rounded-full bg-blue-500 opacity-70 pulse-ring"></div>
+        <div class="relative w-32 h-32 circle-gradient-border shadow-2xl">
+          <div class="absolute inset-0 inner-circle rounded-full flex items-center justify-center">
+            <!-- Update src to your logo path in Splash screen folder -->
+            <img src="Splash screen/icon.png" alt="Company Logo" class="w-28 h-28 pulse-icon rounded-full">
+          </div>
+        </div>
+      </div>
+      <h1 class="mt-8 text-2xl md:text-3xl font-semibold text-blue-400">Welcome to</h1>
+      <p class="mt-2 text-3xl md:text-4xl font-bold text-gray-200">Visitor Management System</p>
+    </div>
+  </div>
+
+  <!-- Navbar (update Login link to scroll to login/register section) -->
+  <header class="fixed w-full z-50 bg-[#0B0D26] shadow-lg">
+    <div class="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+      <div class="flex items-center space-x-3">
+        <img src="Splash screen/icon.png" alt="Logo" class="h-16">
+        <span class="font-bold text-xl">VMS</span>
+      </div>
+      <nav>
+        <ul class="hidden md:flex space-x-6">
+          <li><a href="#about" class="hover:text-blue-400 transition">About</a></li>
+          <li><a href="#services" class="hover:text-blue-400 transition">Services</a></li>
+          <li><a href="#work" class="hover:text-blue-400 transition">Our Work</a></li>
+          <li><a href="#team" class="hover:text-blue-400 transition">Team</a></li>
+          <li><a href="#contact" class="hover:text-blue-400 transition">Contact</a></li>
+        </ul>
+      </nav>
+      <a href="Login and registration/login.html" class="hidden md:inline bg-blue-600 px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Login/Registration</a>
+      <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+    <ul id="mobile-menu" class="md:hidden hidden flex-col bg-[#0B0D26] text-center space-y-3 py-4">
+      <li><a href="#about" class="block hover:text-blue-400 transition">About</a></li>
+      <li><a href="#services" class="block hover:text-blue-400 transition">Services</a></li>
+      <li><a href="#work" class="block hover:text-blue-400 transition">Our Work</a></li>
+      <li><a href="#team" class="block hover:text-blue-400 transition">Team</a></li>
+      <li><a href="#contact" class="block hover:text-blue-400 transition">Contact</a></li>
+      <li>
+        <a href="Login and registration/login.html" class="md:hidden inline-block bg-blue-600 px-5 py-2 rounded-full font-semibold hover:bg-blue-700 transition">Login/Registration</a>
+      </li>
+    </ul>
+  </header>
+
+  <!-- Hero Section with Swiper Slider -->
+  <section class="relative animated-gradient h-screen flex flex-col justify-center items-center text-center overflow-hidden">
+    <!-- Tech SVG Background: Enhanced Dotted Circuit Style -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none z-0" aria-hidden="true">
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+        <linearGradient id="circuitGradient" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#A78BFA" stop-opacity="0.2"/>
+        </linearGradient>
+      </defs>
+      <!-- Dotted Circuit Lines -->
+      <g stroke="url(#circuitGradient)" stroke-width="2" opacity="0.22" filter="url(#glow)">
+        <!-- Vertical Dotted Lines -->
+        <line x1="120" y1="80" x2="120" y2="900" stroke-dasharray="6,8"/>
+        <line x1="320" y1="160" x2="320" y2="900" stroke-dasharray="6,8"/>
+        <line x1="520" y1="240" x2="520" y2="900" stroke-dasharray="6,8"/>
+        <line x1="720" y1="320" x2="720" y2="900" stroke-dasharray="6,8"/>
+        <line x1="920" y1="400" x2="920" y2="900" stroke-dasharray="6,8"/>
+        <!-- Horizontal Dotted Lines -->
+        <line x1="0" y1="220" x2="1200" y2="220" stroke-dasharray="6,8"/>
+        <line x1="0" y1="420" x2="1200" y2="420" stroke-dasharray="6,8"/>
+        <line x1="0" y1="620" x2="1200" y2="620" stroke-dasharray="6,8"/>
+        <line x1="0" y1="820" x2="1200" y2="820" stroke-dasharray="6,8"/>
+        <!-- Diagonal Dotted Lines -->
+        <line x1="100" y1="180" x2="300" y2="350" stroke-dasharray="6,8"/>
+        <line x1="300" y1="350" x2="500" y2="120" stroke-dasharray="6,8"/>
+        <line x1="500" y1="120" x2="700" y2="500" stroke-dasharray="6,8"/>
+        <line x1="700" y1="500" x2="900" y2="250" stroke-dasharray="6,8"/>
+      </g>
+      <!-- Dots at circuit intersections with glow -->
+      <g filter="url(#glow)">
+        <circle cx="120" cy="80" r="5" fill="#3B82F6" opacity="0.5"/>
+        <circle cx="320" cy="160" r="5" fill="#6366F1" opacity="0.5"/>
+        <circle cx="520" cy="240" r="5" fill="#06B6D4" opacity="0.5"/>
+        <circle cx="720" cy="320" r="5" fill="#A78BFA" opacity="0.5"/>
+        <circle cx="920" cy="400" r="5" fill="#F472B6" opacity="0.5"/>
+        <circle cx="100" cy="180" r="4" fill="#3B82F6" opacity="0.4"/>
+        <circle cx="300" cy="350" r="4" fill="#6366F1" opacity="0.4"/>
+        <circle cx="500" cy="120" r="4" fill="#06B6D4" opacity="0.4"/>
+        <circle cx="700" cy="500" r="4" fill="#A78BFA" opacity="0.4"/>
+        <circle cx="900" cy="250" r="4" fill="#F472B6" opacity="0.4"/>
+      </g>
+    </svg>
+    <!-- Floating shapes (existing) -->
+    <div class="floating-shape w-40 h-40 bg-blue-500 -top-20 left-10"></div>
+    <div class="floating-shape w-32 h-32 bg-purple-600 top-40 right-20"></div>
+    <div class="floating-shape w-24 h-24 bg-indigo-500 bottom-10 left-1/2"></div>
+
+    <div class="w-full max-w-4xl mx-auto pt-24 relative z-10">
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+          <!-- Slide 1 -->
+          <div class="swiper-slide flex flex-col items-center justify-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center">
+              <span>
+                <!-- Visitor Management (letter by letter, first line) -->
+                <span class="animate-fade-in-letter" style="animation-delay:0s">V</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.1s">i</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.2s">s</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.3s">i</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.4s">t</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.5s">o</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.6s">r</span>
+                <span>&nbsp;</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.7s">M</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.8s">a</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.9s">n</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.0s">a</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.1s">g</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.2s">e</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.3s">m</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.4s">e</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.5s">n</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.6s">t</span>
+              </span>
+              <br>
+              <span>
+                <!-- Systems (letter by letter, second line) -->
+                <span class="animate-fade-in-letter" style="animation-delay:1.8s">S</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.9s">y</span>
+                <span class="animate-fade-in-letter" style="animation-delay:2.0s">s</span>
+                <span class="animate-fade-in-letter" style="animation-delay:2.1s">t</span>
+                <span class="animate-fade-in-letter" style="animation-delay:2.2s">e</span>
+                <span class="animate-fade-in-letter" style="animation-delay:2.3s">m</span>
+                <span class="animate-fade-in-letter" style="animation-delay:2.4s">s</span>
+              </span>
+            </h2>
+            <p class="text-gray-300 text-lg md:text-xl mb-8">Empowering businesses with seamless visitor tracking and analytics.</p>
+            <div class="flex gap-4">
+              <a href="#services" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition flex items-center gap-2">
+                <!-- Software SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a2 2 0 012-2h2a2 2 0 012 2v2m-6 0h6m-6 0a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2m-6 0v2a2 2 0 002 2h6a2 2 0 002-2v-2"/>
+                </svg>
+                VMS Software
+              </a>
+              <a href="#contact" class="border border-gray-400 px-6 py-3 rounded-full text-gray-200 hover:text-white transition flex items-center gap-2">
+                <!-- Contact SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12v1a4 4 0 01-8 0v-1m8 0a4 4 0 00-8 0m8 0V8a4 4 0 00-8 0v4"/>
+                </svg>
+                Contact Us
+              </a>
+            </div>
+          </div>
+          <!-- Slide 2 -->
+          <div class="swiper-slide flex flex-col items-center justify-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-center">
+              <span>
+                <!-- Modern Dashboard (letter by letter) -->
+                <span class="animate-fade-in-letter" style="animation-delay:0s">M</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.1s">o</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.2s">d</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.3s">e</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.4s">r</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.5s">n</span>
+                <span>&nbsp;</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.6s">D</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.7s">a</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.8s">s</span>
+                <span class="animate-fade-in-letter" style="animation-delay:0.9s">h</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.0s">b</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.1s">o</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.2s">a</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.3s">r</span>
+                <span class="animate-fade-in-letter" style="animation-delay:1.4s">d</span>
+              </span>
+            </h2>
+            <p class="text-gray-300 text-lg md:text-xl mb-8">Visualize visitor analytics in real time with our interactive dashboard.</p>
+            <div class="flex gap-4">
+              <a href="#gallery" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition flex items-center gap-2">
+                <!-- Dashboard SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17a4 4 0 01-4-4V7a4 4 0 014-4h2a4 4 0 014 4v6a4 4 0 01-4 4z"/>
+                </svg>
+                See Interface
+              </a>
+              <a href="#contact" class="border border-gray-400 px-6 py-3 rounded-full text-gray-200 hover:text-white transition flex items-center gap-2">
+                <!-- Contact SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12v1a4 4 0 01-8 0v-1m8 0a4 4 0 00-8 0m8 0V8a4 4 0 00-8 0v4"/>
+                </svg>
+                Contact Us
+              </a>
+            </div>
+          </div>
+         
+        <!-- Swiper Pagination & Navigation -->
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 px-6 max-w-6xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">About VMS</h2>
+    <p class="text-gray-300 mb-10 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+      VMS helps organizations streamline visitor management with advanced features like pre-registration, real-time analytics, and secure access control. Experience professional front desk operations at its best.
+    </p>
+    <a href="#services" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition" data-aos="fade-up" data-aos-delay="200">Explore Services</a>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section id="why-us" class="py-20 px-6 max-w-6xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Why Choose VMS Software?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+      <div class="bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-700 p-8 rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+        <h3 class="text-white font-semibold text-xl mb-2">Expert Team</h3>
+        <p class="text-gray-200 text-sm">Our developers and analysts have years of experience in building scalable, secure solutions.</p>
+      </div>
+      <div class="bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-700 p-8 rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
+        <h3 class="text-white font-semibold text-xl mb-2">Cutting-edge Technology</h3>
+        <p class="text-gray-200 text-sm">We use the latest tools and frameworks to deliver modern, robust software.</p>
+      </div>
+      <div class="bg-gradient-to-br from-blue-700 via-indigo-700 to-purple-700 p-8 rounded-2xl shadow-lg" data-aos="fade-up" data-aos-delay="300">
+        <h3 class="text-white font-semibold text-xl mb-2">Customer Focused</h3>
+        <p class="text-gray-200 text-sm">We prioritize your needs and provide ongoing support for your business growth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-20 bg-[#111430]">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Our Services</h2>
+      <p class="text-gray-400 mb-12" data-aos="fade-up" data-aos-delay="100">Innovative, Interactive & Intuitive Solutions for Your Business</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <!-- Service Cards -->
+        <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl text-center shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="150">
+          <div class="w-16 h-16 mx-auto mb-4 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl">💻</div>
+          <h3 class="text-white font-semibold text-lg mb-2">Custom Software</h3>
+          <p class="text-gray-300 text-sm">Build high-quality, scalable applications with our expert developers.</p>
+        </div>
+        <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl text-center shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="250">
+          <div class="w-16 h-16 mx-auto mb-4 bg-green-600 rounded-full flex items-center justify-center text-white text-2xl">📊</div>
+          <h3 class="text-white font-semibold text-lg mb-2">Data Analytics</h3>
+          <p class="text-gray-300 text-sm">Transform complex data into actionable insights with interactive dashboards.</p>
+        </div>
+        <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl text-center shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="350">
+          <div class="w-16 h-16 mx-auto mb-4 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl">☁️</div>
+          <h3 class="text-white font-semibold text-lg mb-2">Cloud Integration</h3>
+          <p class="text-gray-300 text-sm">Seamlessly integrate your systems and data to the cloud for advanced analytics.</p>
+        </div>
+        <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl text-center shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="450">
+          <div class="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl">🔒</div>
+          <h3 class="text-white font-semibold text-lg mb-2">Security & Access</h3>
+          <p class="text-gray-300 text-sm">Ensure safe and professional visitor experiences with secure access control.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Technologies We Use Section -->
+  <section id="tech-stack" class="py-20 px-6 max-w-6xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Technologies We Use</h2>
+    <div class="flex flex-wrap justify-center gap-8 mt-10">
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg flex flex-col items-center" data-aos="fade-up" data-aos-delay="100">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" class="w-12 h-12 mb-2">
+        <span class="text-white font-semibold">React</span>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" class="w-12 h-12 mb-2">
+        <span class="text-white font-semibold">Node.js</span>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" class="w-12 h-12 mb-2">
+        <span class="text-white font-semibold">MongoDB</span>
+      </div>
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg flex flex-col items-center" data-aos="fade-up" data-aos-delay="400">
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" alt="Flutter" class="w-12 h-12 mb-2">
+        <span class="text-white font-semibold">Flutter</span>
+      </div>
+    </div>
+  </section>
+
+  
+  <!-- Pricing Section -->
+<section id="pricing" class="py-20 px-6 bg-[#0B0D26] text-center">
+  <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Pricing Plans</h2>
+  <p class="text-gray-400 mb-12 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+    Flexible pricing plans designed to suit businesses of all sizes.
+  </p>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+    <!-- Basic Plan -->
+    <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="150">
+      <h3 class="text-white text-2xl font-bold mb-4">Basic</h3>
+      <p class="text-gray-400 text-sm mb-6">Perfect for small offices</p>
+      <p class="text-white text-4xl font-bold mb-6">$29<span class="text-gray-400 text-lg">/mo</span></p>
+      <ul class="text-gray-300 mb-6 space-y-2 text-left">
+        <li>✔ Visitor pre-registration</li>
+        <li>✔ Basic analytics dashboard</li>
+        <li>✔ Email notifications</li>
+      </ul>
+      <a href="#contact" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition inline-block">Get Started</a>
+    </div>
+    
+    <!-- Pro Plan -->
+    <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl shadow-lg transition-transform duration-500 card-3d border-2 border-blue-500" data-aos="fade-up" data-aos-delay="250">
+      <h3 class="text-white text-2xl font-bold mb-4">Pro</h3>
+      <p class="text-gray-400 text-sm mb-6">For growing businesses</p>
+      <p class="text-white text-4xl font-bold mb-6">$59<span class="text-gray-400 text-lg">/mo</span></p>
+      <ul class="text-gray-300 mb-6 space-y-2 text-left">
+        <li>✔ All Basic features</li>
+        <li>✔ Advanced analytics & reports</li>
+        <li>✔ Multi-location support</li>
+        <li>✔ Priority support</li>
+      </ul>
+      <a href="#contact" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition inline-block">Get Started</a>
+    </div>
+
+    <!-- Enterprise Plan -->
+    <div class="bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 p-8 rounded-2xl shadow-lg transition-transform duration-500 card-3d" data-aos="fade-up" data-aos-delay="350">
+      <h3 class="text-white text-2xl font-bold mb-4">Enterprise</h3>
+      <p class="text-gray-400 text-sm mb-6">Custom solutions for large organizations</p>
+      <p class="text-white text-4xl font-bold mb-6">Custom</p>
+      <ul class="text-gray-300 mb-6 space-y-2 text-left">
+        <li>✔ All Pro features</li>
+        <li>✔ Dedicated account manager</li>
+        <li>✔ API & integrations</li>
+        <li>✔ Custom analytics & reports</li>
+      </ul>
+      <a href="#contact" class="bg-blue-600 px-6 py-3 rounded-full font-semibold btn-glow transition inline-block">Contact Sales</a>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Team Section -->
+  <section id="team" class="py-20 bg-[#111430] text-center">
+    <h2 class="text-4xl font-bold mb-10" data-aos="fade-up">Our Team</h2>
+    <div class="flex flex-wrap justify-center gap-8">
+      <!-- Team Member -->
+      <div class="w-64" data-aos="fade-up" data-aos-delay="100">
+        <div class="relative rounded-full overflow-hidden w-48 h-48 mx-auto mb-4">
+          <img src="shafin.png" alt="Khan Shahariyar Islam" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 hover:opacity-100 flex justify-center items-center gap-4 transition">
+            <a href="#" class="text-blue-400 text-xl">🔗</a>
+          </div>
+        </div>
+        <h4 class="text-white font-semibold">Khan Shahariyar Islam</h4>
+        <p class="text-gray-400 text-sm">Web Developer</p>
+      </div>
+      <!-- Team Member -->
+      <div class="w-64" data-aos="fade-up" data-aos-delay="200">
+        <div class="relative rounded-full overflow-hidden w-48 h-48 mx-auto mb-4">
+          <img src="zamil.png" alt="Mohammad Zamil Jahid" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 hover:opacity-100 flex justify-center items-center gap-4 transition">
+            <a href="#" class="text-blue-400 text-xl">🔗</a>
+            <a href="#" class="text-blue-400 text-xl">🐦</a>
+          </div>
+        </div>
+        <h4 class="text-white font-semibold">Mohammad Zamil Jahid</h4>
+        <p class="text-gray-400 text-sm">Backend Developer</p>
+      </div>
+      <!-- Team Member -->
+      <div class="w-64" data-aos="fade-up" data-aos-delay="300">
+        <div class="relative rounded-full overflow-hidden w-48 h-48 mx-auto mb-4">
+          <img src="arise.png" alt="Almas Hossain Arise" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 hover:opacity-100 flex justify-center items-center gap-4 transition">
+            <a href="#" class="text-blue-400 text-xl">🔗</a>
+            <a href="#" class="text-blue-400 text-xl">🐦</a>
+          </div>
+        </div>
+        <h4 class="text-white font-semibold">Almas Hossain Arise</h4>
+        <p class="text-gray-400 text-sm">App Developer</p>
+      </div>
+      <!-- Team Member (Sumaita Binte Hafiz) -->
+      <div class="w-64" data-aos="fade-up" data-aos-delay="400">
+        <div class="relative rounded-full overflow-hidden w-48 h-48 mx-auto mb-4">
+          <img src="unnamed.png" alt="Sumaita Binte Hafiz" class="w-full h-full object-cover">
+          <div class="absolute inset-0 bg-black bg-opacity-60 opacity-0 hover:opacity-100 flex justify-center items-center gap-4 transition">
+            <a href="#" class="text-blue-400 text-xl">🔗</a>
+            <a href="#" class="text-blue-400 text-xl">🐦</a>
+          </div>
+        </div>
+        <h4 class="text-white font-semibold">Sumaita Binte Hafiz</h4>
+        <p class="text-gray-400 text-sm">Database Designer</p>
+      </div>
+    </div>
+  </section> 
+ 
+
+  <!-- Software Interface Gallery Section -->
+<section id="gallery" class="py-20 px-6 max-w-7xl mx-auto text-center">
+  <h2 class="text-4xl font-bold mb-6" data-aos="fade-up">Software Interface Gallery</h2>
+  <p class="text-gray-400 mb-12" data-aos="fade-up" data-aos-delay="100">
+    Explore screenshots of our intuitive and modern VMS software interface.
+  </p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    <div class="rounded-lg overflow-hidden shadow-lg" data-aos="zoom-in" data-aos-delay="150">
+      <img src="1.png" alt="Dashboard Screenshot" class="w-full h-64 object-cover">
+      <div class="bg-[#111430] p-4">
+        <h3 class="text-white font-semibold mb-2">Dashboard</h3>
+        <p class="text-gray-400 text-sm">Overview of visitor analytics and activity.</p>
+      </div>
+    </div>
+    <div class="rounded-lg overflow-hidden shadow-lg" data-aos="zoom-in" data-aos-delay="250">
+      <img src="2.png" alt="Registration Screenshot" class="w-full h-64 object-cover">
+      <div class="bg-[#111430] p-4">
+        <h3 class="text-white font-semibold mb-2">Visitor Registration</h3>
+        <p class="text-gray-400 text-sm">Easy visitor check-in and registration process.</p>
+      </div>
+    </div>
+    <div class="rounded-lg overflow-hidden shadow-lg" data-aos="zoom-in" data-aos-delay="350">
+      <img src="3.png" alt="Reports Screenshot" class="w-full h-64 object-cover">
+      <div class="bg-[#111430] p-4">
+        <h3 class="text-white font-semibold mb-2">Reports & Analytics</h3>
+        <p class="text-gray-400 text-sm">Detailed reports for management and compliance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Call To Action Section -->
+  <section class="py-20 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white text-center">
+    <h2 class="text-4xl font-bold mb-4" data-aos="fade-up">Ready to Transform Your Visitor Experience?</h2>
+    <p class="mb-8 text-lg" data-aos="fade-up" data-aos-delay="100">Join hundreds of businesses using VMS to streamline visitor management.</p>
+    <a href="#contact" class="bg-white text-blue-600 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition btn-glow" data-aos="fade-up" data-aos-delay="200">Get Started Now</a>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 px-6 max-w-5xl mx-auto">
+  <h2 class="text-4xl font-bold mb-6 text-center" data-aos="fade-up">Contact Us</h2>
+  <p class="text-gray-300 mb-10 text-center" data-aos="fade-up" data-aos-delay="100">
+    Have questions or want a demo? Reach out to our team and we’ll get back to you promptly.
+  </p>
+  <div class="bg-[#111430] rounded-xl shadow-lg p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-start" data-aos="fade-up" data-aos-delay="150">
+    <!-- Left Side: Company Info -->
+    <div>
+      <h3 class="text-white font-semibold mb-2">VMS Software Ltd.</h3>
+      <p class="text-gray-400 text-sm mb-2">Dhaka, Bangladesh</p>
+      <p class="text-gray-400 text-sm mb-2">Phone: <a href="tel:+880123456789" class="text-blue-400 hover:underline">+880 1234 56789</a></p>
+      <p class="text-gray-400 text-sm mb-2">Email: <a href="mailto:info@vmssoftware.com" class="text-blue-400 hover:underline">info@vmssoftware.com</a></p>
+      <p class="text-gray-400 text-sm mb-2">Business Hours: Sun–Thu, 9:00 AM–6:00 PM</p>
+      <div class="mt-4 rounded-lg overflow-hidden">
+        <iframe 
+          src="https://www.google.com/maps?q=Dhaka,+Bangladesh&output=embed"
+          width="100%" height="150" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+      <div class="mt-6">
+        <h4 class="text-white font-semibold mb-2">Follow Us</h4>
+        <div class="flex space-x-4">
+          <a href="#" class="hover:text-blue-400">Facebook</a>
+          <a href="#" class="hover:text-blue-400">Twitter</a>
+          <a href="#" class="hover:text-blue-400">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <!-- Right Side: Contact Form -->
+    <form class="flex flex-col gap-4" data-aos="fade-up" data-aos-delay="200">
+      <input type="text" placeholder="Your Name" class="p-4 rounded-lg text-black" required>
+      <input type="email" placeholder="Email Address" class="p-4 rounded-lg text-black" required>
+      <input type="text" placeholder="Subject" class="p-4 rounded-lg text-black" required>
+      <textarea rows="5" placeholder="Your Message" class="p-4 rounded-lg text-black" required></textarea>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full font-semibold btn-glow">Send Message</button>
+    </form>
+  </div>
+</section>
+
+  <!-- Footer -->
+  <footer class="bg-[#0B0D26] border-t border-gray-700 pt-10 pb-4 text-gray-400">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Company Info -->
+      <div>
+        <h3 class="text-white font-bold text-xl mb-2">VMS Software Ltd.</h3>
+        <p class="mb-4 text-gray-400 text-sm">
+          VMS Software Ltd. is a leading provider of visitor management and analytics solutions, helping organizations streamline operations and enhance security.
+        </p>
+        <div class="flex space-x-4 mt-2">
+          <a href="#" class="hover:text-white">Facebook</a>
+          <a href="#" class="hover:text-white">Twitter</a>
+          <a href="#" class="hover:text-white">LinkedIn</a>
+        </div>
+      </div>
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-white font-semibold mb-3">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="#about" class="hover:text-blue-400 transition">About</a></li>
+          <li><a href="#services" class="hover:text-blue-400 transition">Services</a></li>
+          <li><a href="#pricing" class="hover:text-blue-400 transition">Pricing</a></li>
+          <li><a href="#team" class="hover:text-blue-400 transition">Team</a></li>
+          <li><a href="#contact" class="hover:text-blue-400 transition">Contact</a></li>
+        </ul>
+      </div>
+      <!-- Map -->
+      <div>
+        <h4 class="text-white font-semibold mb-3">Our Location</h4>
+        <iframe 
+          src="https://www.google.com/maps?q=Dhaka,+Bangladesh&output=embed"
+          width="100%" height="150" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        <p class="mt-2 text-sm">Dhaka, Bangladesh</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-4 text-center text-xs text-gray-500">
+      © 2025 VMS Software Ltd. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+
+    // Splash Screen Logic
+    window.addEventListener("DOMContentLoaded", function () {
+      setTimeout(function () {
+        document.getElementById("splash-screen").style.opacity = "0";
+        setTimeout(function () {
+          document.getElementById("splash-screen").style.display = "none";
+        }, 1000);
+      }, 3000); // Splash duration in ms
+    });
+
+    // Mobile Menu Toggle
+    const btn = document.getElementById('menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    btn.addEventListener('click', () => {
+      menu.classList.toggle('hidden');
+    });
+  </script>
+  
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const proPlan = document.querySelector('#pricing .border-blue-500');
+
+    // Add Best Value Badge
+    const badge = document.createElement('div');
+    badge.textContent = 'Best Value';
+    badge.className = 'absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 rounded-bl-lg font-bold text-sm animate-bounce';
+    badge.style.transform = 'translate(50%, -50%)';
+    proPlan.style.position = 'relative';
+    proPlan.appendChild(badge);
+
+    // Highlight Plan on Scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          proPlan.classList.add('scale-105', 'shadow-2xl');
+        } else {
+          proPlan.classList.remove('scale-105', 'shadow-2xl');
+        }
+      });
+    }, { threshold: 0.5 });
+    observer.observe(proPlan);
+
+    // Price Count-Up Animation
+    const priceElements = document.querySelectorAll('#pricing p.text-4xl');
+    
+    const animatePrice = el => {
+      const targetText = el.textContent.replace(/\D/g, ''); // get numeric part
+      let current = 0;
+      const step = Math.ceil(parseInt(targetText) / 50); // 50 steps animation
+      const interval = setInterval(() => {
+        current += step;
+        if(current >= parseInt(targetText)){
+          current = parseInt(targetText);
+          clearInterval(interval);
+        }
+        el.innerHTML = `$${current}<span class="text-gray-400 text-lg">${el.textContent.includes('/mo') ? '/mo' : ''}</span>`;
+      }, 20);
+    };
+
+    const priceObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          animatePrice(entry.target);
+          priceObserver.unobserve(entry.target); // animate only once
+        }
+      });
+    }, { threshold: 0.5 });
+
+    priceElements.forEach(el => priceObserver.observe(el));
+  });
+</script>
+
+<script>
+  // Swiper initialization for hero slider
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".swiper-button-next",
+      prevEl: ".swiper-button-prev",
+    }
+    // Remove effect: "fade" for better animation replay
+  });
+</script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Redirect to user dashboard after login
+    window.location.href = "User/user.html";
+  });
+</script>
+
+
+</body>
+</html>

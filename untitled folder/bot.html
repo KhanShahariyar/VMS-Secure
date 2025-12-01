@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inferno Robotic Mission Simulator - Visual</title>
+<style>
+body { font-family: Arial, sans-serif; background:#1b1b1b; color:white; display:flex; flex-direction:column; align-items:center; margin:0; padding:20px; }
+h1 { color: #ff4500; text-shadow: 2px 2px 10px #ff6600; }
+.status-panel, .controls, .bot-controls, .logs { margin:10px 0; display:flex; flex-wrap: wrap; gap:10px; }
+.status-panel p { margin:0 15px; font-weight:bold; }
+.status-connected { color:#00ff00; text-shadow:0 0 8px #00ff00; }
+.status-disconnected { color:#ff0000; text-shadow:0 0 8px #ff0000; }
+canvas { border-radius:10px; background:#111; margin-top:20px; box-shadow: 0 0 20px #ff4500; }
+button { padding:10px 20px; font-size:14px; border:none; border-radius:8px; cursor:pointer; transition:all 0.2s ease, box-shadow 0.2s ease; }
+button:hover { transform: scale(1.05); box-shadow:0 0 15px #ff6600; }
+.connect-btn { background:linear-gradient(to right,#ff4500,#ff8c00); color:white; }
+.disconnect-btn { background:linear-gradient(to right,#8b0000,#ff0000); color:white; }
+.arm-btn { background:linear-gradient(to right,#ff6347,#ff4500); color:white; }
+.record-btn { background:linear-gradient(to right,#ffa500,#ff8c00); color:white; }
+.bot-btn { background:linear-gradient(to right,#ff1493,#ff69b4); color:white; }
+.sliders { display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; max-width:600px; margin-top:10px; }
+.slider-group { display:flex; flex-direction:column; align-items:center; }
+input[type=range] { width:100%; }
+#missionMap { width:400px; height:200px; background:#111; margin-top:15px; border-radius:10px; position:relative; overflow:hidden; box-shadow:0 0 20px #ff4500 inset; }
+.log-entry { font-size:12px; margin:2px 0; color:#ffb347; text-shadow: 0 0 3px #ff6600; opacity:0.9; transition: opacity 1s ease; }
+.progress-bar { width:400px; height:20px; background:#222; border-radius:10px; margin:10px 0; overflow:hidden; box-shadow:0 0 15px #ff4500; }
+.progress-fill { width:0%; height:100%; background:linear-gradient(to right,#ff4500,#ff8c00,#ff4500); animation: glow 2s infinite; border-radius:10px; }
+@keyframes glow { 0% {box-shadow:0 0 5px #ff4500,0 0 10px #ff8c00;} 50% {box-shadow:0 0 15px #ff4500,0 0 25px #ff8c00;} 100% {box-shadow:0 0 5px #ff4500,0 0 10px #ff8c00;} }
+.object-glow { animation: pulse 1.5s infinite; box-shadow: 0 0 12px #ffb347,0 0 20px #ff8c00; }
+@keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.3);} 100% {transform: scale(1);} }
+.bot-trail { position:absolute; width:6px; height:6px; border-radius:50%; background:#ff1493; opacity:0.5; }
+</style>
+</head>
+<body>
+
+<h1>Inferno Robotic Mission Simulator</h1>
+
+<div class="status-panel" style="flex-direction:column;align-items:flex-start;">
+  <p>Arm: <span id="armStatus" class="status-disconnected">Not Connected</span></p>
+  <p>Bot: <span id="botStatus" class="status-disconnected">Not Connected</span></p>
+  <p>Objects Collected: <span id="objectsCollected">0</span></p>
+  <p>Mission Time: <span id="missionTime">00:00</span></p>
+</div>
+
+<div class="controls">
+  <button class="connect-btn" onclick="connectArm()">Connect Arm</button>
+  <button class="disconnect-btn" onclick="disconnectArm()">Disconnect Arm</button>
+</div>
+
+<canvas id="armCanvas" width="400" height="400"></canvas>
+
+<div class="sliders">
+  <div class="slider-group"><label>Servo 1</label><input type="range" min="0" max="180" value="90" id="servo1"></div>
+  <div class="slider-group"><label>Servo 2</label><input type="range" min="0" max="180" value="90" id="servo2"></div>
+  <div class="slider-group"><label>Servo 3</label><input type="range" min="0" max="180" value="90" id="servo3"></div>
+  <div class="slider-group"><label>Servo 4</label><input type="range" min="0" max="180" value="90" id="servo4"></div>
+  <div class="slider-group"><label>Gripper</label><input type="range" min="0" max="30" value="0" id="gripper"></div>
+</div>
+
+<div class="controls">
+  <button class="arm-btn" onclick="presetMotion('Home')">Home</button>
+  <button class="arm-btn" onclick="presetMotion('Pick')">Pick</button>
+  <button class="arm-btn" onclick="presetMotion('Place')">Place</button>
+  <button class="arm-btn" onclick="presetMotion('Reset')">Reset</button>
+</div>
+
+<div class="controls">
+  <button class="record-btn" onclick="startRecording()">Start Recording</button>
+  <button class="record-btn" onclick="stopRecording()">Stop Recording</button>
+  <button class="record-btn" onclick="playback()">Playback</button>
+</div>
+
+<div class="bot-controls">
+  <button class="bot-btn" onclick="botMove('forward')">Forward</button>
+  <button class="bot-btn" onclick="botMove('backward')">Backward</button>
+  <button class="bot-btn" onclick="botMove('left')">Turn Left</button>
+  <button class="bot-btn" onclick="botMove('right')">Turn Right</button>
+  <button class="bot-btn" onclick="startMission()">Start Mission</button>
+  <button class="bot-btn" onclick="stopMission()">Stop Mission</button>
+</div>
+
+<div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+<div id="missionMap"></div>
+<div class="logs" id="logPanel"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.155.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* ------------------- Arm Variables ------------------- */
+let connectedArm=false, targetAngles=[90,90,90,90], currentAngles=[90,90,90,90], gripperTarget=0, gripperCurrent=0;
+let recording=false, recordedFrames=[], objectsCollected=0, missionActive=false, missionStartTime=null;
+
+/* ------------------- Arm Functions ------------------- */
+function connectArm(){ connectedArm=true; document.getElementById('armStatus').textContent="Connected"; document.getElementById('armStatus').classList.replace("status-disconnected","status-connected"); log("Arm connected"); }
+function disconnectArm(){ connectedArm=false; document.getElementById('armStatus').textContent="Not Connected"; document.getElementById('armStatus').classList.replace("status-connected","status-disconnected"); log("Arm disconnected"); }
+function presetMotion(m){ switch(m){ case 'Home': targetAngles=[90,90,90,90]; gripperTarget=0; break; case 'Pick': targetAngles=[45,120,60,90]; gripperTarget=30; break; case 'Place': targetAngles=[120,60,120,90]; gripperTarget=0; break; case 'Reset': targetAngles=[90,90,90,90]; gripperTarget=0; break; } updateSliders(); log(`Preset motion: ${m}`); }
+function updateSliders(){ for(let i=1;i<=4;i++) document.getElementById(`servo${i}`).value=targetAngles[i-1]; document.getElementById('gripper').value=gripperTarget; }
+function startRecording(){ recordedFrames=[]; recording=true; log("Recording started"); }
+function stopRecording(){ recording=false; log(`Recording stopped: ${recordedFrames.length} frames`); }
+function playback(){ if(recordedFrames.length===0){ log("No recorded frames"); return; } let idx=0; const interval=setInterval(()=>{ if(idx>=recordedFrames.length){ clearInterval(interval); return; } targetAngles=recordedFrames[idx].slice(0,4); gripperTarget=recordedFrames[idx][4]; idx++; }, 100); log("Playback started"); }
+
+/* ------------------- Map & Bot ------------------- */
+const missionMap = document.getElementById('missionMap'), mapWidth = missionMap.clientWidth, mapHeight = missionMap.clientHeight;
+let bot={x:50,y:150,size:20,color:'#ff1493', trail:[]};
+let basket={size:10,color:'#ffd700'};
+let objects=[];
+for(let i=0;i<5;i++){ objects.push({x:Math.random()*mapWidth*0.8+20, y:Math.random()*mapHeight*0.8+20, collected:false}); }
+
+function drawMap(){
+  missionMap.innerHTML='';
+  // Bot Trail
+  bot.trail.push({x:bot.x,y:bot.y});
+  if(bot.trail.length>50) bot.trail.shift();
+  bot.trail.forEach(p=>{ const div=document.createElement('div'); div.className='bot-trail'; div.style.left=p.x+'px'; div.style.top=p.y+'px'; missionMap.appendChild(div); });
+  // Objects
+  objects.forEach(obj=>{ if(!obj.collected){ const div=document.createElement('div'); div.className='object-glow'; div.style.width=div.style.height='15px'; div.style.position='absolute'; div.style.left=obj.x+'px'; div.style.top=obj.y+'px'; div.style.borderRadius='50%'; div.style.background='#ffb347'; missionMap.appendChild(div); } });
+  // Bot
+  const botDiv=document.createElement('div'); botDiv.style.width=botDiv.style.height=bot.size+'px'; botDiv.style.background=bot.color; botDiv.style.position='absolute'; botDiv.style.left=bot.x+'px'; botDiv.style.top=bot.y+'px'; botDiv.style.borderRadius='50%'; botDiv.style.boxShadow='0 0 12px #ff1493,0 0 20px #ff4500'; missionMap.appendChild(botDiv);
+  // Basket
+  const basketDiv=document.createElement('div'); basketDiv.style.width=basketDiv.style.height=basket.size+'px'; basketDiv.style.background=basket.color; basketDiv.style.position='absolute'; basketDiv.style.left=(bot.x + bot.size/2 - basket.size/2)+'px'; basketDiv.style.top=(bot.y - basket.size)+'px'; basketDiv.style.borderRadius='50%'; basketDiv.style.boxShadow='0 0 10px #ffff00'; missionMap.appendChild(basketDiv);
+}
+
+/* ------------------- Bot Movement ------------------- */
+function moveBotToward(targetX,targetY,callback){ const interval=setInterval(()=>{ const dx=targetX-bot.x, dy=targetY-bot.y; const dist=Math.sqrt(dx*dx+dy*dy); if(dist<2){ clearInterval(interval); if(callback) callback(); return; } bot.x+=dx*0.05; bot.y+=dy*0.05; drawMap(); },30); }
+function botMove(dir){ log(`Bot moving: ${dir}`); }
+
+/* ------------------- 3D Arm ------------------- */
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x111111);
+const camera=new THREE.PerspectiveCamera(50,400/400,0.1,1000); camera.position.set(200,200,200);
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('armCanvas'),antialias:true}); renderer.setSize(400,400);
+const controls=new THREE.OrbitControls(camera,renderer.domElement); controls.enableDamping=true;
+scene.add(new THREE.AmbientLight(0xffffff,0.7));
+const dirLight=new THREE.DirectionalLight(0xffffff,0.8); dirLight.position.set(100,200,100); scene.add(dirLight);
+const lengths=[80,70,60,40]; const materials=new THREE.MeshStandardMaterial({color:0xff4500, emissive:0xff3300, emissiveIntensity:0.3});
+const segments=[], joints=[]; for(let i=0;i<4;i++){ const geom=new THREE.BoxGeometry(10,lengths[i],10); geom.translate(0,lengths[i]/2,0); const mesh=new THREE.Mesh(geom,materials); const joint=new THREE.Object3D(); joint.add(mesh); joints.push(joint); segments.push(mesh);}
+joints.reduce((p,j)=>{ scene.add(j); return j; }, scene);
+const gripperMat=new THREE.MeshStandardMaterial({color:0xffd700, emissive:0xffa500, emissiveIntensity:0.5});
+const leftFinger=new THREE.Mesh(new THREE.BoxGeometry(5,20,5),gripperMat);
+const rightFinger=new THREE.Mesh(new THREE.BoxGeometry(5,20,5),gripperMat);
+leftFinger.position.set(-5,0,0); rightFinger.position.set(5,0,0); joints[3].add(leftFinger,rightFinger);
+leftFinger.geometry.translate(0,10,0); rightFinger.geometry.translate(0,10,0);
+function update3DArm(){ for(let i=0;i<4;i++) joints[i].rotation.z=(currentAngles[i]-90)*Math.PI/180; leftFinger.position.x=-5-gripperCurrent/2; rightFinger.position.x=5+gripperCurrent/2; }
+
+/* ------------------- Animate ------------------- */
+function animate(){ requestAnimationFrame(animate); controls.update();
+for(let i=0;i<4;i++) currentAngles[i]+= (targetAngles[i]-currentAngles[i])*0.05;
+gripperCurrent+=(gripperTarget-gripperCurrent)*0.05;
+if(recording) recordedFrames.push([...currentAngles,gripperCurrent]);
+update3DArm(); renderer.render(scene,camera); drawMap();
+updateMissionTimer(); }
+animate();
+
+/* ------------------- Progress & Logs ------------------- */
+function updateProgress(val){ document.getElementById('progressFill').style.width=`${Math.min(val*20,100)}%`; }
+function log(msg){ const panel=document.getElementById('logPanel'); const entry=document.createElement('div'); entry.className="log-entry"; entry.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`; panel.prepend(entry); }
+
+/* ------------------- Slider Listeners ------------------- */
+for(let i=1;i<=4;i++){ document.getElementById(`servo${i}`).addEventListener('input',e=>targetAngles[i-1]=parseInt(e.target.value)); }
+document.getElementById('gripper').addEventListener('input',e=>gripperTarget=parseInt(e.target.value));
+
+/* ------------------- Mission ------------------- */
+function startMission(){ missionActive=true; missionStartTime=Date.now(); log("Mission started!"); pickNextObject(); }
+function stopMission(){ missionActive=false; log("Mission stopped."); }
+function updateMissionTimer(){ if(missionActive && missionStartTime){ let diff=Math.floor((Date.now()-missionStartTime)/1000); let m=Math.floor(diff/60).toString().padStart(2,'0'); let s=(diff%60).toString().padStart(2,'0'); document.getElementById('missionTime').textContent=`${m}:${s}`; } }
+function pickNextObject(){ const obj = objects.find(o=>!o.collected); if(obj && missionActive){ presetMotion('Pick'); setTimeout(()=>{ gripperTarget=30; obj.collected=true; objectsCollected++; document.getElementById('objectsCollected').textContent=objectsCollected; updateProgress(objectsCollected); setTimeout(()=>{ presetMotion('Place'); moveBotToward(mapWidth-30,10,()=>{ if(objects.every(o=>o.collected)) spawnObjects(objects.length); if(missionActive) pickNextObject(); }); },800); },800); } }
+function spawnObjects(count){ for(let i=0;i<count;i++){ objects[i].x=Math.random()*(mapWidth-40)+20; objects[i].y=Math.random()*(mapHeight-40)+20; objects[i].collected=false; log("🌟 New object spawned!"); } }
+</script>
+</body>
+</html>

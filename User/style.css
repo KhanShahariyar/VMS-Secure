@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a;
+}
+
+/* Gradient border wrapper */
+.gradient-border {
+    background: linear-gradient(145deg, #1e3a8a, #3b82f6);
+    padding: 2px;
+    border-radius: 12px;
+}
+
+/* Profile picture gradient border */
+.profile-gradient-border {
+    background: linear-gradient(145deg, #a855f7, #ec4899);
+    padding: 3px;
+    border-radius: 9999px;
+}
+
+/* Status badges */
+.status-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-weight: 600;
+}
+
+.status-upcoming {
+    background-color: #fcd34d;
+    color: #78350f;
+}
+
+.status-completed {
+    background-color: #34d399;
+    color: #064e3b;
+}
+
+.status-canceled {
+    background-color: #ef4444;
+    color: #7f1d1d;
+}
+
+/* Input focus effect */
+#search-past:focus,
+#status-filter:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}

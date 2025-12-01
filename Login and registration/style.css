@@ -1,0 +1,38 @@
+/* Import the Inter font for a modern look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a; /* Dark blue background */
+}
+
+/* Custom styles for the gradient border effect */
+.gradient-border {
+    background: linear-gradient(145deg, #1e3a8a, #3b82f6);
+    padding: 2px;
+    border-radius: 12px;
+}
+
+/* Active toggle button style */
+.toggle-btn.active {
+    background-color: #3b82f6;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Custom animation for form transitions */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

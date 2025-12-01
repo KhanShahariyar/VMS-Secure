@@ -1,2 +1,1 @@
-# VMS-Secure
-Visitor Managment Systems
+# VMS Webiste
